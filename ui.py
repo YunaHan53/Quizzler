@@ -22,7 +22,7 @@ class QuizInterface:
         )
         self.canvas.grid(row=1, column=0, columnspan=2, pady=50)
         #Score Label
-        self.score_label = Label(text=f"Score: {0}", bg=THEME_COLOR, fg="white", font=("Arial", 12, "bold"))
+        self.score_label = Label(text=f"Score: {self.quiz.score}/{self.quiz.question_number}", bg=THEME_COLOR, fg="white", font=("Arial", 12, "bold"))
         self.score_label.grid(row=0, column=1)
         #True/False Buttons
         true_image = PhotoImage(file="images/true.png")
@@ -39,8 +39,18 @@ class QuizInterface:
 
     def get_next_question(self):
         self.canvas.config(bg="white")
-        q_text = self.quiz.next_question()
-        self.canvas.itemconfig(self.question_text, text=q_text)
+        self.score_label.config(text=f"Score: {self.quiz.score}/{self.quiz.question_number}")
+        if self.quiz.still_has_questions():
+            q_text = self.quiz.next_question()
+            self.canvas.itemconfig(self.question_text, text=q_text)
+        else:
+            self.canvas.itemconfig(
+                self.question_text,
+                text=f"You've completed the quiz.\n Final Score: {self.quiz.score}/{self.quiz.question_number}",
+            )
+            self.true_button.config(state="disabled")
+            self.false_button.config(state="disabled")
+
 
     def respond_true(self):
         is_right = self.quiz.check_answer("True")
